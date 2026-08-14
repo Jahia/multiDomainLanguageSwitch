@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<content xmlns:j="http://www.jahia.org/jahia/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0">
+   <modules jcr:primaryType="jnt:modules">
+      <multi-domain-language-switch j:dependencies="default"
+                                    j:modulePriority="0"
+                                    j:moduleType="module"
+                                    j:title="Multi Domain Language Switch"
+                                    jcr:primaryType="jnt:module">
+         <portlets jcr:primaryType="jnt:portletFolder"/>
+         <files jcr:primaryType="jnt:folder"/>
+         <contents jcr:primaryType="jnt:contentFolder"/>
+         <templates j:rootTemplatePath="/base" jcr:primaryType="jnt:templatesFolder">
+            <files jcr:primaryType="jnt:folder"/>
+            <contents jcr:primaryType="jnt:contentFolder"/>
+            <site-settings-base j:view="siteSettings"
+                                jcr:mixinTypes="jmix:useUILocale"
+                                jcr:primaryType="jnt:template">
+               <languageUrlSettings
+                       j:applyOn="jnt:virtualsite"
+                       j:defaultTemplate="false"
+                       j:hiddenTemplate="true"
+                       j:priority="100"
+                       j:requiredPermissionNames="siteAdminLanguageUrlMapping"
+                       j:titleKey="lsm.siteSettings.title"
+                       jcr:mixinTypes="jmix:rbTitle"
+                       jcr:primaryType="jnt:contentTemplate">
+                  <pagecontent jcr:primaryType="jnt:contentList">
+                     <languageUrlSiteSettings jcr:primaryType="lsm:languageUrlSiteSettings">
+                        <j:translation_en jcr:language="en"
+                                          jcr:mixinTypes="mix:title"
+                                          jcr:primaryType="jnt:translation"
+                                          jcr:title="Language URL mapping"/>
+                     </languageUrlSiteSettings>
+                  </pagecontent>
+               </languageUrlSettings>
+            </site-settings-base>
+         </templates>
+      </multi-domain-language-switch>
+   </modules>
+</content>

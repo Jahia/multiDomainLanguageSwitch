@@ -1,0 +1,16 @@
+<lsm = 'http://www.example.org/languageSwitch/1.0'>
+<jnt = 'http://www.jahia.org/jahia/nt/1.0'>
+<jmix = 'http://www.jahia.org/jahia/mix/1.0'>
+<mix = 'http://www.jcp.org/jcr/mix/1.0'>
+
+// Site-level settings: one entry per language, format "lang=https://host[/optional/base/path]"
+[lsm:languageUrlSettings] mixin
+ extends = jnt:virtualsite
+ itemtype = options
+ - lsm:languageUrls (string) multiple nofulltext
+
+// The droppable component: renders the multi-domain language switch menu
+[lsm:domaineSwitchLanguage] > jnt:content, jmix:basicContent, jmix:editorialContent
+
+// Content node backing the site settings admin panel (rendered in the administration iframe)
+[lsm:languageUrlSiteSettings] > jnt:content, mix:title, jmix:studioOnly, jmix:siteComponent

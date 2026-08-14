@@ -1,0 +1,14 @@
+{
+  "nodeType": "jnt:virtualsite",
+  "sections": [
+    {
+      "name": "options",
+      "fieldSets": [
+        {
+          "name": "lsm:languageUrlSettings",
+          "hide": true
+        }
+      ]
+    }
+  ]
+}

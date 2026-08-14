@@ -1,0 +1,19 @@
+.lsm-language-menu ul {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin: 0;
+    padding: 0;
+}
+
+.lsm-language-menu a.lsm-item {
+    text-decoration: none;
+}
+
+/* Current language: non-color visual indicator (bold + underline) on top of aria-current */
+.lsm-language-menu a.lsm-current {
+    font-weight: 700;
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+}
