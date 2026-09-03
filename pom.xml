@@ -53,6 +53,8 @@
                         <!-- Deploy-free coding: remove for production releases -->
                         <Jahia-Source-Folders>${project.basedir}</Jahia-Source-Folders>
                         <_dsannotations>*</_dsannotations>
+                        <!-- Required so lsm:switchToLanguageUrlLink is visible to modules that depend on this one via jahia-depends. Jahia-Depends alone only orders the module dependency; OSGi still requires an explicit Export-Package on this side and a matching Import-Package on the consumer side. -->
+                        <Export-Package>org.example.modules.lsm.taglibs</Export-Package>
                     </instructions>
                 </configuration>
             </plugin>

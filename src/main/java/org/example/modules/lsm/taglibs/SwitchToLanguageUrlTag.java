@@ -3,6 +3,7 @@ package org.example.modules.lsm.taglibs;
 import java.io.IOException;
 import java.util.Locale;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.tagext.Tag;
 
 import org.apache.commons.lang.StringEscapeUtils;
@@ -24,19 +25,30 @@ public class SwitchToLanguageUrlTag extends AbstractJahiaTag {
     @Override
     public int doStartTag() {
         try {
-            final String currentLanguage = getCurrentResource().getLocale().getLanguage();
+            // Compare on the full locale (fr_CH), not just the language (fr):
+            // Locale.getLanguage() drops the country, so fr and fr_CH would
+            // otherwise both compare equal to "fr".
+            final String currentLanguage = getCurrentResource().getLocale().toString();
             final String code = getLanguageCode();
 
             final Locale locale = LanguageCodeConverters.languageCodeToLocale(code);
-            final String displayLanguage = locale.getDisplayLanguage(locale);
+            // getDisplayLanguage() also drops the country (always "français" for
+            // fr and fr_CH); getDisplayName() keeps the distinction.
+            final String displayLanguage = locale.getDisplayName(locale);
             // BCP 47 form (hyphen), valid for HTML lang/hreflang attributes
             final String bcp47 = locale.toLanguageTag();
-            final boolean isCurrent = currentLanguage.equals(locale.getLanguage());
+            final boolean isCurrent = currentLanguage.equals(locale.toString());
 
-            // Standard switch link to the main resource. Jahia's outbound URL rewriting
-            // localizes it; the per-language domain is then enforced at request time by
-            // LanguageDomainRedirectFilter.
+            // Standard switch link to the main resource. Routing it through encodeURL()
+            // triggers Jahia's outbound URL rewriting (vanity URL, /cms prefix removal,
+            // language token) exactly like core tags such as getGwtDictionnaryInclude do;
+            // without it, the raw /cms/render/... path is printed as-is. The per-language
+            // domain is then enforced at request time by LanguageDomainRedirectFilter.
             String link = generateCurrentNodeLangSwitchLink(code);
+            HttpServletResponse response = (HttpServletResponse) pageContext.getResponse();
+            if (response != null) {
+                link = response.encodeURL(link);
+            }
 
             final StringBuilder buff = new StringBuilder(300);
             buff.append("<a class=\"lsm-item").append(isCurrent ? " lsm-current" : "").append('"')

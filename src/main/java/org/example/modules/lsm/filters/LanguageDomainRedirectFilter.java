@@ -48,7 +48,9 @@ public class LanguageDomainRedirectFilter extends AbstractFilter {
         if (site == null || !site.isNodeType("lsm:languageUrlSettings")) {
             return null;
         }
-        String mappedBase = getMappedBase(site, resource.getLocale().getLanguage());
+        // Full locale (fr_CH), not just the language (fr): getLanguage() would collapse
+        // fr and fr_CH to the same key and always match the first one found.
+        String mappedBase = getMappedBase(site, resource.getLocale().toString());
         if (mappedBase == null) {
             return null;
         }
