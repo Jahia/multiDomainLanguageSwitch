@@ -2,7 +2,7 @@ import org.jahia.services.content.*
 import org.jahia.api.Constants
 
 /**
- * Drops one lsm:domaineSwitchLanguage component into a page, so the rendered
+ * Drops one lsm:domainSwitchLanguage component into a page, so the rendered
  * output actually contains the menu the rewrite filter is supposed to touch.
  *
  * The component is created inside the page's main area, creating that area node
@@ -22,7 +22,7 @@ def page = session.getNode(pagePath)
 
 def area = page.hasNode(areaName) ? page.getNode(areaName) : page.addNode(areaName, 'jnt:contentList')
 if (!area.hasNode(nodeName)) {
-    area.addNode(nodeName, 'lsm:domaineSwitchLanguage')
+    area.addNode(nodeName, 'lsm:domainSwitchLanguage')
 }
 session.save()
 println "menu-added:${pagePath}/${areaName}/${nodeName}"

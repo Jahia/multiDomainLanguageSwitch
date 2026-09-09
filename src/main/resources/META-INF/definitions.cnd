@@ -12,7 +12,7 @@
  - lsm:languageUrls (string) multiple nofulltext
 
 // The droppable component: renders the multi-domain language switch menu
-[lsm:domaineSwitchLanguage] > jnt:content, jmix:basicContent, jmix:editorialContent
+[lsm:domainSwitchLanguage] > jnt:content, jmix:basicContent, jmix:editorialContent
 
 // Content node backing the site settings admin panel (rendered in the administration iframe)
 [lsm:languageUrlSiteSettings] > jnt:content, mix:title, jmix:studioOnly, jmix:siteComponent

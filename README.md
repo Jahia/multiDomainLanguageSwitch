@@ -17,7 +17,7 @@ Requesting a page in a language bound to another domain redirects there.
 | **Requires** | Jahia 8.2 · optional: `site-settings-seo` for the `hreflang` and canonical rewriting |
 | **Configured in** | Administration → Sites → *Language URL mapping* |
 | **Affects** | live mode only — edit and preview are untouched by design |
-| **Licence** | MIT |
+| **Licence** | MIT — see [LICENSE.txt](LICENSE.txt) and [SECURITY.md](SECURITY.md) |
 
 ### Where to read what
 
@@ -76,7 +76,7 @@ one-to-one — several languages can share a host while others get a dedicated o
 
 ## What's in the module
 
-The droppable component `lsm:domaineSwitchLanguage` renders the menu: a `<nav>`
+The droppable component `lsm:domainSwitchLanguage` renders the menu: a `<nav>`
 with one link per site language. Labels are endonyms ("Français", "Deutsch"), each
 link has `lang` and `hreflang` in BCP 47 form, and the current language gets
 `aria-current="page"` plus a bold/underline style.

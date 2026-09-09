@@ -12,8 +12,11 @@
          <templates j:rootTemplatePath="/base" jcr:primaryType="jnt:templatesFolder">
             <files jcr:primaryType="jnt:folder"/>
             <contents jcr:primaryType="jnt:contentFolder"/>
+            <!-- No jmix:useUILocale here: ForceUILocaleFilter matches
+                 applyOnNodeTypes against the RENDERED node, which is the site,
+                 not this template, so the mixin never fired. The panel takes the
+                 UI locale from utility:setBundle instead. -->
             <site-settings-base j:view="siteSettings"
-                                jcr:mixinTypes="jmix:useUILocale"
                                 jcr:primaryType="jnt:template">
                <languageUrlSettings
                        j:applyOn="jnt:virtualsite"

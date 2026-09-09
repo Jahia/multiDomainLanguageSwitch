@@ -2,7 +2,7 @@
 
 **[README](README.md)** · Integration · **[FAQ](FAQ.md)** · **[Tests](tests/README.md)**
 
-How to use `lsm:domaineSwitchLanguage` from your own module (a site factory, a
+How to use `lsm:domainSwitchLanguage` from your own module (a site factory, a
 template set, a design module) and how to replace its markup with your own.
 
 The module ships with a working view. You only need this guide if you want the
@@ -22,7 +22,7 @@ from a view of yours.
 
 | Layer | Where it lives | Yours to change? |
 |---|---|---|
-| Menu markup (`<nav>`, `<ul>`, wrappers, ordering, extra labels) | `domaineSwitchLanguage.jsp` view | Yes — override it |
+| Menu markup (`<nav>`, `<ul>`, wrappers, ordering, extra labels) | `domainSwitchLanguage.jsp` view | Yes — override it |
 | Each link's markup (`<a>` attributes, label) | `SwitchToLanguageUrlTag` | Only by copying the tag (option B) |
 | CSS | `lsm.css` | Yes — override or replace |
 | Host rewriting, per-language redirect, mapping storage, settings panel | `LanguageLinkRewriteFilter`, `LanguageDomainRedirectFilter`, `SaveLanguageUrlsAction` | No — leave in this module |
@@ -93,14 +93,14 @@ Same view path as the module's, in your own module. Jahia picks the view from th
 module with the highest priority, so yours wins:
 
 ```
-src/main/resources/lsm_domaineSwitchLanguage/html/domaineSwitchLanguage.jsp
-src/main/resources/lsm_domaineSwitchLanguage/html/domaineSwitchLanguage.properties
+src/main/resources/lsm_domainSwitchLanguage/html/domainSwitchLanguage.jsp
+src/main/resources/lsm_domainSwitchLanguage/html/domainSwitchLanguage.properties
 ```
 
 Or ship it as a named variant an editor can pick, leaving the default in place:
 
 ```
-src/main/resources/lsm_domaineSwitchLanguage/html/domaineSwitchLanguage.footer.jsp
+src/main/resources/lsm_domainSwitchLanguage/html/domainSwitchLanguage.footer.jsp
 ```
 
 Keep `cache.mainResource=true` in the `.properties` file. The links target the
