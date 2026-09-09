@@ -1,4 +1,4 @@
-import {HOST_CH, HOST_DE, HOST_WWW, MAPPING, PLAIN_PATH, SITE_KEY, adminSpaUrl, adminUrl, fetchRaw, liveUrl, setMapping} from '../support/lsm';
+import {HOST_CH, HOST_DE, HOST_WWW, MAPPING, PLAIN_PATH, SITE_KEY, adminUrl, fetchRaw, liveUrl, setMapping} from '../support/lsm';
 
 /**
  * The mapping editor in Administration > Sites > Language URL mapping, driven

@@ -1,4 +1,4 @@
-import {HOST_WWW, MAPPING, actionUrl, getCsrfToken, setMapping} from '../support/lsm';
+import {HOST_WWW, MAPPING, actionUrl, setMapping} from '../support/lsm';
 
 /**
  * The saveLanguageUrls action, called directly rather than through the panel.

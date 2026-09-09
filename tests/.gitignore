@@ -4,3 +4,5 @@ cypress/screenshots/
 cypress/downloads/
 results/
 docker.env
+assets/multi-domain-language-switch-*.jar
+artifacts/*.jar

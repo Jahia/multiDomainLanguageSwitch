@@ -53,10 +53,6 @@ export const SUB_PATH = `${PLAIN_PATH}/${SUB_PAGE}`;
 export const adminUrl = (siteKey: string = SITE_KEY, lang = LANG_DEFAULT) =>
     `/cms/editframe/default/${lang}/sites/${siteKey}.languageUrlSettings.html`;
 
-/** The administration SPA route that embeds the panel above. */
-export const adminSpaUrl = (siteKey: string = SITE_KEY) =>
-    `/jahia/administration/${siteKey}/languageUrlSiteSettings`;
-
 /** URL of the saveLanguageUrls action, dispatched through Jahia's action + security filters. */
 export const actionUrl = (siteKey: string = SITE_KEY, lang = LANG_DEFAULT) =>
     `/cms/render/default/${lang}/sites/${siteKey}.saveLanguageUrls.do`;
@@ -91,7 +87,7 @@ const runGroovy = (script: string, replacements: Record<string, string>) =>
         expect(String(result), `groovy script ${script} failed`).to.not.contain('failed');
     });
 
-export const setServerNameAliases = (aliases: string[], siteKey: string = SITE_KEY) =>
+const setServerNameAliases = (aliases: string[], siteKey: string = SITE_KEY) =>
     runGroovy('setServerNameAliases.groovy', {
         '@@SITE_KEY@@': siteKey,
         '@@ALIASES@@': aliases.join(',')
@@ -109,9 +105,6 @@ export const setMapping = (mapping: Record<string, string>, siteKey: string = SI
         '@@ENTRIES_B64@@': Buffer.from(entries, 'utf8').toString('base64')
     });
 };
-
-export const clearMapping = (siteKey: string = SITE_KEY) =>
-    runGroovy('setLanguageUrlMapping.groovy', {'@@SITE_KEY@@': siteKey, '@@ENTRIES_B64@@': ''});
 
 export const addLanguageMenu = (pagePath: string, area = 'pagecontent', nodeName = 'lsmMenu') =>
     runGroovy('addLanguageMenu.groovy', {
@@ -173,16 +166,3 @@ export const liveUrl = (host: string, lang: string, pagePath: string) => {
     return `${host}${prefix}${path}.html`;
 };
 
-/**
- * Fetches a valid OWASP CSRFGuard token for the current cy.request session.
- * Jahia rejects an unguarded .do POST with HTTP 400 before the action runs, so a
- * programmatic caller has to replicate what CsrfGuardJavascriptFilter injects in
- * the browser: read the token out of the /modules/CsrfServlet script.
- */
-export const getCsrfToken = (): Cypress.Chainable<{name: string; value: string}> =>
-    cy.request({url: `${HOST_WWW}/modules/CsrfServlet`, log: false}).then((res: Cypress.Response<string>) => {
-        const js = String(res.body);
-        const value = (js.match(/'([A-Z0-9]{4}(?:-[A-Z0-9]{4}){4,})'/) || [])[1];
-        const name = (js.match(/=(?:'|")([A-Za-z][A-Za-z0-9_-]+)(?:'|"),\w=(?:'|")[A-Z0-9]{4}-/) || [])[1];
-        return {name: name || 'CSRFTOKEN', value: value || ''};
-    });

@@ -150,9 +150,9 @@ Two things to know about these scripts, both inherited from `@jahia/cypress`:
 
 - They `source .env` (or `.env.example`) **from the current directory**, so one
   of those files must exist in `tests/` — see below.
-- `ci.build.sh` builds with `@jahia/cypress`'s own `env.Dockerfile`, not the
-  local `Dockerfile`. The local one is only used if you run `docker build`
-  yourself.
+- `ci.build.sh` builds the image with `@jahia/cypress`'s own `env.Dockerfile`,
+  which copies this directory in and runs `env.run.sh`. There is deliberately no
+  local `Dockerfile`: it would be dead weight.
 
 In this mode Cypress runs inside the network and reaches Jahia through the
 `aliases` declared on the `jahia` service, so the hostnames work without
@@ -184,7 +184,7 @@ JAHIA_VERSION=${JAHIA_VERSION:-8.2.3.2}
 JAHIA_IMAGE=${JAHIA_IMAGE:-ghcr.io/jahia/jahia-ee-dev:8.2.3.2}
 TESTS_IMAGE=${TESTS_IMAGE:-jahia/multi-domain-language-switch:latest}
 MODULE_ID=${MODULE_ID:-multi-domain-language-switch}
-MANIFEST=${MANIFEST:-provisioning-manifest-snapshot.yml}
+MANIFEST=${MANIFEST:-provisioning-manifest-snapshot.yml}   # the only manifest; point it elsewhere for a release pipeline
 JAHIA_URL=${JAHIA_URL:-http://jahia:8080}
 SUPER_USER_PASSWORD=${SUPER_USER_PASSWORD:-root1234}
 JAHIA_LICENSE=${JAHIA_LICENSE:-""}
