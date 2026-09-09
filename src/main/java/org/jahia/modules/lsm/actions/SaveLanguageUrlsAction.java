@@ -1,4 +1,4 @@
-package org.example.modules.lsm.actions;
+package org.jahia.modules.lsm.actions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
 import org.jahia.bin.Action;
 import org.jahia.bin.ActionResult;
+import org.jahia.modules.lsm.mapping.LanguageUrlMapping;
 import org.jahia.services.content.JCRNodeWrapper;
 import org.jahia.services.content.JCRSessionWrapper;
 import org.jahia.services.content.decorator.JCRSiteNode;
@@ -23,9 +24,13 @@ import org.osgi.service.component.annotations.Component;
  * Saves the per-language base URL mapping on the site node
  * (multi-valued property {@code lsm:languageUrls}, entries formatted "lang=https://host").
  * <p>
+ * Only http(s) URLs reduced to scheme, host and optional port are stored; see
+ * {@link LanguageUrlMapping#normalize(String)} for why that is a security
+ * boundary and not just input tidying.
+ * <p>
  * Called from the site settings panel as {@code <site>.saveLanguageUrls.do}.
  * Expects one request parameter per site language, named {@code url-<lang>}.
- * Empty values remove the mapping for that language. Only http(s) URLs are accepted.
+ * Empty values remove the mapping for that language.
  */
 @Component(service = Action.class, immediate = true)
 public class SaveLanguageUrlsAction extends Action {
@@ -51,19 +56,22 @@ public class SaveLanguageUrlsAction extends Action {
             if (StringUtils.isBlank(url)) {
                 continue;
             }
-            String trimmed = url.trim();
-            // Restrict to http(s): the value ends up in a href attribute on the live site
-            if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) {
-                entries.add(lang + "=" + StringUtils.stripEnd(trimmed, "/"));
+            // These values are injected into href attributes of every live page, so
+            // they are not merely prefix-checked: LanguageUrlMapping parses the URL
+            // and rebuilds it from its scheme, host and port, which makes an attribute
+            // break-out unrepresentable rather than filtered.
+            String normalized = LanguageUrlMapping.normalize(url);
+            if (normalized != null) {
+                entries.add(lang + "=" + normalized);
             } else {
                 rejected.add(lang);
             }
         }
 
-        if (!siteNode.isNodeType("lsm:languageUrlSettings")) {
-            siteNode.addMixin("lsm:languageUrlSettings");
+        if (!siteNode.isNodeType(LanguageUrlMapping.MIXIN)) {
+            siteNode.addMixin(LanguageUrlMapping.MIXIN);
         }
-        siteNode.setProperty("lsm:languageUrls", entries.toArray(new String[0]));
+        siteNode.setProperty(LanguageUrlMapping.PROPERTY, entries.toArray(new String[0]));
         session.save();
 
         JSONObject result = new JSONObject();

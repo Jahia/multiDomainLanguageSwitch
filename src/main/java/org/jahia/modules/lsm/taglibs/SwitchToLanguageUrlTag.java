@@ -1,4 +1,4 @@
-package org.example.modules.lsm.taglibs;
+package org.jahia.modules.lsm.taglibs;
 
 import java.io.IOException;
 import java.util.Locale;
@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
  * JSP tag that renders an accessible language switch link for the current main
  * resource (endonym label, BCP 47 lang/hreflang, aria-current on the current
  * language). The per-language domain itself is enforced at request time by
- * {@link org.example.modules.lsm.filters.LanguageDomainRedirectFilter}.
+ * {@link org.jahia.modules.lsm.filters.LanguageDomainRedirectFilter}.
  */
 public class SwitchToLanguageUrlTag extends AbstractJahiaTag {
 

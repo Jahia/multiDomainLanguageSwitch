@@ -1,9 +1,11 @@
-<lsm = 'http://www.example.org/languageSwitch/1.0'>
+<lsm = 'http://www.jahia.org/languageSwitch/1.0'>
 <jnt = 'http://www.jahia.org/jahia/nt/1.0'>
 <jmix = 'http://www.jahia.org/jahia/mix/1.0'>
 <mix = 'http://www.jcp.org/jcr/mix/1.0'>
 
-// Site-level settings: one entry per language, format "lang=https://host[/optional/base/path]"
+// Site-level settings: one entry per language, format "lang=https://host[:port]".
+// lang is the Java locale form (fr, fr_CH). A path is not supported: the filters
+// compare and rewrite on host and port only.
 [lsm:languageUrlSettings] mixin
  extends = jnt:virtualsite
  itemtype = options

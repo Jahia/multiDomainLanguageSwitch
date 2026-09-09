@@ -9,7 +9,7 @@
     <display-name>Multi Domain Language Switch</display-name>
     <tlib-version>1.0</tlib-version>
     <short-name>lsm</short-name>
-    <uri>http://www.example.org/tags/lsm</uri>
+    <uri>http://www.jahia.org/tags/lsm</uri>
 
     <tag>
         <description>
@@ -18,7 +18,7 @@
             module's redirect filter.
         </description>
         <name>switchToLanguageUrlLink</name>
-        <tag-class>org.example.modules.lsm.taglibs.SwitchToLanguageUrlTag</tag-class>
+        <tag-class>org.jahia.modules.lsm.taglibs.SwitchToLanguageUrlTag</tag-class>
         <body-content>empty</body-content>
         <attribute>
             <description>Language code to generate the link for</description>

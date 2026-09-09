@@ -1,14 +1,13 @@
-package org.example.modules.lsm.filters;
+package org.jahia.modules.lsm.filters;
 
 import java.net.URI;
+import java.util.Map;
 
-import javax.jcr.RepositoryException;
-import javax.jcr.Value;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
-import org.jahia.services.content.decorator.JCRSiteNode;
+import org.jahia.modules.lsm.mapping.LanguageUrlMapping;
 import org.jahia.services.render.RenderContext;
 import org.jahia.services.render.Resource;
 import org.jahia.services.render.filter.AbstractFilter;
@@ -44,24 +43,26 @@ public class LanguageDomainRedirectFilter extends AbstractFilter {
 
     @Override
     public String prepare(RenderContext renderContext, Resource resource, RenderChain chain) throws Exception {
-        JCRSiteNode site = renderContext.getSite();
-        if (site == null || !site.isNodeType("lsm:languageUrlSettings")) {
+        Map<String, String> mapping = LanguageUrlMapping.read(renderContext.getSite());
+        if (mapping.isEmpty()) {
             return null;
         }
         // Full locale (fr_CH), not just the language (fr): getLanguage() would collapse
         // fr and fr_CH to the same key and always match the first one found.
-        String mappedBase = getMappedBase(site, resource.getLocale().toString());
+        String mappedBase = mapping.get(resource.getLocale().toString());
         if (mappedBase == null) {
             return null;
         }
 
         HttpServletRequest request = renderContext.getRequest();
+        // Safe by construction: LanguageUrlMapping rebuilds every base from parsed
+        // URI components, so this cannot throw and carries no path, query or credentials
         URI target = URI.create(mappedBase);
         String targetHost = target.getHost();
         int targetPort = normalizePort(target.getPort(), target.getScheme());
         int requestPort = normalizePort(request.getServerPort(), request.getScheme());
 
-        if (targetHost == null || (targetHost.equalsIgnoreCase(request.getServerName()) && targetPort == requestPort)) {
+        if (targetHost.equalsIgnoreCase(request.getServerName()) && targetPort == requestPort) {
             return null;
         }
 
@@ -72,29 +73,13 @@ public class LanguageDomainRedirectFilter extends AbstractFilter {
             uri = request.getRequestURI();
         }
         String query = request.getQueryString();
-        String location = StringUtils.stripEnd(mappedBase, "/") + uri
-                + (StringUtils.isNotEmpty(query) ? "?" + query : "");
+        String location = mappedBase + uri + (StringUtils.isNotEmpty(query) ? "?" + query : "");
         HttpServletResponse response = renderContext.getResponse();
         if (!response.isCommitted()) {
             logger.debug("Redirecting {} request on {} to {}", resource.getLocale(), request.getServerName(), location);
             response.sendRedirect(location);
         }
         return "";
-    }
-
-    private String getMappedBase(JCRSiteNode site, String language) throws RepositoryException {
-        if (!site.hasProperty("lsm:languageUrls")) {
-            return null;
-        }
-        for (Value value : site.getProperty("lsm:languageUrls").getValues()) {
-            String entry = value.getString();
-            String lang = StringUtils.substringBefore(entry, "=");
-            String url = StringUtils.substringAfter(entry, "=");
-            if (language.equals(lang) && (url.startsWith("http://") || url.startsWith("https://"))) {
-                return url.trim();
-            }
-        }
-        return null;
     }
 
     private int normalizePort(int port, String scheme) {
