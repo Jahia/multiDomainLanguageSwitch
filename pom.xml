@@ -10,7 +10,7 @@
 
     <groupId>org.jahia.community</groupId>
     <artifactId>multi-domain-language-switch</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1-SNAPSHOT</version>
     <packaging>bundle</packaging>
     <name>Multi Domain Language Switch</name>
     <description>
@@ -23,7 +23,7 @@
         <connection>scm:git:git@github.com:Jahia/multiDomainLanguageSwitch.git</connection>
         <developerConnection>scm:git:git@github.com:Jahia/multiDomainLanguageSwitch.git</developerConnection>
         <url>https://github.com/Jahia/multiDomainLanguageSwitch</url>
-        <tag>1_0_0</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <organization>
