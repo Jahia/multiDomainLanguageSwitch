@@ -21,6 +21,28 @@
         targets the host configured for that language.
     </description>
 
+    <scm>
+        <connection>scm:git:git@github.com:Jahia/multiDomainLanguageSwitch.git</connection>
+        <developerConnection>scm:git:git@github.com:Jahia/multiDomainLanguageSwitch.git</developerConnection>
+        <url>https://github.com/Jahia/multiDomainLanguageSwitch</url>
+        <tag>HEAD</tag>
+    </scm>
+
+    <organization>
+        <name>Jahia Community</name>
+        <url>https://github.com/Jahia</url>
+    </organization>
+
+    <developers>
+        <developer>
+            <id>pvollenweider</id>
+            <name>Philippe Vollenweider</name>
+            <email>pvollenweider@jahia.com</email>
+            <organization>Jahia</organization>
+            <organizationUrl>https://www.jahia.com</organizationUrl>
+        </developer>
+    </developers>
+
     <licenses>
         <license>
             <name>MIT License</name>

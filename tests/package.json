@@ -13,7 +13,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Jahia/multi-domain-language-switch.git",
+    "url": "git+https://github.com/Jahia/multiDomainLanguageSwitch.git",
     "directory": "tests"
   },
   "license": "MIT",
