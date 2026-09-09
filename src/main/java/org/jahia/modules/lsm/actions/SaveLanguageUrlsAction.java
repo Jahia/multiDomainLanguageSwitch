@@ -49,11 +49,20 @@ public class SaveLanguageUrlsAction extends Action {
         JCRSiteNode site = renderContext.getSite();
         JCRNodeWrapper siteNode = session.getNode(site.getPath());
 
+        // The property is multi-valued and rewritten whole, so anything not put back
+        // is deleted. A rejected value must therefore fall back to what is already
+        // stored: otherwise a typo in one field silently destroys that language's
+        // working mapping while the response still reports success.
+        Map<String, String> stored = LanguageUrlMapping.read(siteNode);
+
         List<String> entries = new ArrayList<>();
         List<String> rejected = new ArrayList<>();
+        List<String> kept = new ArrayList<>();
+        int saved = 0;
         for (String lang : site.getLanguages()) {
             String url = getParameter(parameters, "url-" + lang);
             if (StringUtils.isBlank(url)) {
+                // An emptied field is an explicit instruction to drop the mapping
                 continue;
             }
             // These values are injected into href attributes of every live page, so
@@ -63,8 +72,14 @@ public class SaveLanguageUrlsAction extends Action {
             String normalized = LanguageUrlMapping.normalize(url);
             if (normalized != null) {
                 entries.add(lang + "=" + normalized);
+                saved++;
             } else {
                 rejected.add(lang);
+                String previous = stored.get(lang);
+                if (previous != null) {
+                    entries.add(lang + "=" + previous);
+                    kept.add(lang);
+                }
             }
         }
 
@@ -75,7 +90,10 @@ public class SaveLanguageUrlsAction extends Action {
         session.save();
 
         JSONObject result = new JSONObject();
-        result.put("saved", entries.size());
+        result.put("saved", saved);
+        // Languages whose submitted value was refused but whose stored mapping was
+        // left intact, so the caller can say "not changed" rather than "lost"
+        result.put("kept", kept);
         result.put("rejected", rejected);
         return new ActionResult(HttpServletResponse.SC_OK, null, result);
     }

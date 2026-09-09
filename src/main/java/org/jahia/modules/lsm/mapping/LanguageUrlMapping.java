@@ -11,7 +11,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 
 import org.apache.commons.lang.StringUtils;
-import org.jahia.services.content.decorator.JCRSiteNode;
+import org.jahia.services.content.JCRNodeWrapper;
 
 /**
  * Reads and validates the per-language base URL mapping stored on a site
@@ -82,8 +82,12 @@ public final class LanguageUrlMapping {
         return scheme + "://" + host + (defaultPort ? "" : ":" + port);
     }
 
-    /** The site's mapping, keyed on the Java locale code, with invalid entries dropped. */
-    public static Map<String, String> read(JCRSiteNode site) throws RepositoryException {
+    /**
+     * The site's mapping, keyed on the Java locale code, with invalid entries
+     * dropped. Takes a plain node so callers can read from whichever node they
+     * are about to write to, rather than from a second view of the same site.
+     */
+    public static Map<String, String> read(JCRNodeWrapper site) throws RepositoryException {
         if (site == null || !site.isNodeType(MIXIN) || !site.hasProperty(PROPERTY)) {
             return Collections.emptyMap();
         }
