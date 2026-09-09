@@ -39,11 +39,12 @@ public class SwitchToLanguageUrlTag extends AbstractJahiaTag {
             final String bcp47 = locale.toLanguageTag();
             final boolean isCurrent = currentLanguage.equals(locale.toString());
 
-            // Standard switch link to the main resource. Routing it through encodeURL()
-            // triggers Jahia's outbound URL rewriting (vanity URL, /cms prefix removal,
-            // language token) exactly like core tags such as getGwtDictionnaryInclude do;
-            // without it, the raw /cms/render/... path is printed as-is. The per-language
-            // domain is then enforced at request time by LanguageDomainRedirectFilter.
+            // Standard switch link to the main resource. Routing it through the
+            // response encodeURL method is what triggers Jahia's outbound URL
+            // rewriting — vanity URL, context prefix removal, language token —
+            // exactly as the core tags do. Without that step the raw render path
+            // is printed as-is. The per-language domain is then enforced at
+            // request time by LanguageDomainRedirectFilter.
             String link = generateCurrentNodeLangSwitchLink(code);
             HttpServletResponse response = (HttpServletResponse) pageContext.getResponse();
             if (response != null) {

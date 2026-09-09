@@ -22,6 +22,8 @@ import org.json.JSONArray;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentCaptor;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -99,17 +101,20 @@ class SaveLanguageUrlsActionTest {
         assertThat(name.getValue()).isEqualTo("lsm:languageUrls");
     }
 
-    @Test
-    @DisplayName("trailing slashes are stripped before storing")
-    void stripsTrailingSlash() throws Exception {
-        execute(params("en", "https://www.example.com/"));
-        assertThat(storedEntries()).containsExactly("en=https://www.example.com");
-    }
-
-    @Test
-    @DisplayName("surrounding whitespace is trimmed")
-    void trimsWhitespace() throws Exception {
-        execute(params("en", "  https://www.example.com  "));
+    @ParameterizedTest
+    @ValueSource(strings = {
+        "https://www.example.com/",
+        "  https://www.example.com  ",
+        "HTTPS://WWW.Example.com",
+        "https://www.example.com:443",
+        "https://www.example.com/some/base/path"
+    })
+    @DisplayName("the submitted value is normalised before being stored")
+    void normalisesBeforeStoring(String submitted) throws Exception {
+        // The action delegates to LanguageUrlMapping.normalize, whose own rules are
+        // covered exhaustively by LanguageUrlMappingTest; what matters here is that
+        // the action stores the normalised form and not the raw input.
+        execute(params("en", submitted));
         assertThat(storedEntries()).containsExactly("en=https://www.example.com");
     }
 

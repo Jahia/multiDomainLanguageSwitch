@@ -90,9 +90,8 @@ class SwitchToLanguageUrlTagTest {
     @DisplayName("the label is the endonym, and keeps the country for a regional locale")
     void endonymLabelKeepsCountry() throws Exception {
         String html = render("fr_CH");
-        // getDisplayLanguage() would return plain "français" for both fr and fr_CH
-        assertThat(html).contains("(");
-        assertThat(html).doesNotContain(">français<");
+        // getDisplayLanguage would return plain "français" for both fr and fr_CH
+        assertThat(html).contains("(").doesNotContain(">français<");
     }
 
     @Test
