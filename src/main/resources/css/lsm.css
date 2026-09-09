@@ -1,19 +1,57 @@
+/*
+ * Language switch menu.
+ *
+ * Deliberately imposes no colour, no font and no radius: integrators restyle
+ * this inside their own design system, and anything opinionated here is
+ * something they have to undo first. Four class names are the public surface —
+ * .lsm-language-menu, its ul, .lsm-item and .lsm-current — and they are stable.
+ *
+ * What this file does guarantee, because an integrator's reset would otherwise
+ * silently remove it:
+ *  - a visible focus indicator drawn in the inherited text colour, so it works
+ *    on any background without knowing the palette (WCAG 2.4.7, 2.4.13);
+ *  - a target at least 44px tall (WCAG 2.5.5 AAA), built from padding and
+ *    min-height so a user stylesheet increasing text spacing cannot clip it
+ *    (WCAG 1.4.12);
+ *  - a non-colour indicator of the current language, since colour alone would
+ *    fail WCAG 1.4.1 — and the module does not control the colour anyway.
+ *
+ * Text and background contrast is the integrator's responsibility: the module
+ * inherits both. See FAQ.md.
+ */
+
 .lsm-language-menu ul {
-    list-style: none;
     display: flex;
     flex-wrap: wrap;
-    gap: 0.75rem;
+    gap: 0.25rem 1rem;
     margin: 0;
     padding: 0;
+    list-style: none;
 }
 
 .lsm-language-menu a.lsm-item {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0.25rem 0;
+    color: inherit;
     text-decoration: none;
+    text-underline-offset: 0.2em;
 }
 
-/* Current language: non-color visual indicator (bold + underline) on top of aria-current */
+/* Hover and focus change decoration, never weight or size: reflowing the menu
+   under the pointer would move the item the user is aiming at. */
+.lsm-language-menu a.lsm-item:hover {
+    text-decoration: underline;
+}
+
+.lsm-language-menu a.lsm-item:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 3px;
+}
+
 .lsm-language-menu a.lsm-current {
     font-weight: 700;
     text-decoration: underline;
-    text-underline-offset: 0.2em;
+    text-decoration-thickness: 0.125em;
 }

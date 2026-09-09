@@ -31,7 +31,11 @@
         </c:catch>
 
         <nav class="lsm-language-menu" aria-label="<fmt:message key='lsm.menu.ariaLabel'/>">
-            <ul>
+            <%-- role="list" is redundant markup that is nevertheless required:
+                 Safari drops list semantics from a ul whose list-style is none,
+                 and lsm.css removes the markers. Without it VoiceOver stops
+                 announcing "list, 4 items". --%>
+            <ul role="list">
                 <c:forEach var="languageCode" items="${languageCodes}">
                     <c:if test="${! empty languageCode && ! fn:contains(invalidLanguages, languageCode)}">
                         <li><lsm:switchToLanguageUrlLink languageCode="${languageCode}"/></li>
