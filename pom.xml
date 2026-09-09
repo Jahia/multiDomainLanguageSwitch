@@ -10,7 +10,7 @@
         <version>8.2.0.0</version>
     </parent>
 
-    <groupId>org.example.modules</groupId>
+    <groupId>org.jahia.community</groupId>
     <artifactId>multi-domain-language-switch</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <packaging>bundle</packaging>
@@ -21,9 +21,28 @@
         targets the host configured for that language.
     </description>
 
+    <licenses>
+        <license>
+            <name>MIT License</name>
+            <url>https://opensource.org/licenses/MIT</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
     <properties>
         <jahia-depends>default</jahia-depends>
+        <!-- See Jahia-Source-Folders below: empty unless the dev-sources profile is active -->
+        <jahia.source.folders/>
     </properties>
+
+    <profiles>
+        <profile>
+            <id>dev-sources</id>
+            <properties>
+                <jahia.source.folders>${project.basedir}</jahia.source.folders>
+            </properties>
+        </profile>
+    </profiles>
 
     <repositories>
         <repository>
@@ -40,8 +59,53 @@
         </repository>
     </repositories>
 
+    <dependencies>
+        <!-- Test dependencies -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>5.10.3</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>4.11.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-junit-jupiter</artifactId>
+            <version>4.11.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <version>3.27.7</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- Not needed to build the bundle: Jahia provides it at runtime. Required on the
+             test classpath only because the static initializer of org.jahia.services.render.Resource
+             resolves Guava classes, which fails when mocking Resource without it. -->
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>33.4.8-jre</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.5.3</version>
+                <configuration>
+                    <useModulePath>false</useModulePath>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
@@ -49,12 +113,16 @@
                 <configuration>
                     <instructions>
                         <Jahia-Module-Type>module</Jahia-Module-Type>
+                        <Bundle-License>https://opensource.org/licenses/MIT</Bundle-License>
                         <Jahia-Static-Resources>/css,/javascript</Jahia-Static-Resources>
-                        <!-- Deploy-free coding: remove for production releases -->
-                        <Jahia-Source-Folders>${project.basedir}</Jahia-Source-Folders>
+                        <!-- Deploy-free coding. Empty by default: the value is an
+                             absolute path from the build machine, which has no place
+                             in a released bundle's manifest. Build with -Pdev-sources
+                             (or -Djahia.source.folders=${project.basedir}) to enable it. -->
+                        <Jahia-Source-Folders>${jahia.source.folders}</Jahia-Source-Folders>
                         <_dsannotations>*</_dsannotations>
                         <!-- Required so lsm:switchToLanguageUrlLink is visible to modules that depend on this one via jahia-depends. Jahia-Depends alone only orders the module dependency; OSGi still requires an explicit Export-Package on this side and a matching Import-Package on the consumer side. -->
-                        <Export-Package>org.example.modules.lsm.taglibs</Export-Package>
+                        <Export-Package>org.jahia.modules.lsm.taglibs</Export-Package>
                     </instructions>
                 </configuration>
             </plugin>
