@@ -1,0 +1,33 @@
+# Local variant of provisioning.yml, for the "Jahia in docker, Cypress on the host"
+# setup. In CI the module under test is installed from artifacts/ by the Cypress
+# container, so provisioning.yml does not mention it; here nothing else installs it.
+#
+# Copy the built module next to this file first:
+#   cp ../target/multi-domain-language-switch-*.jar assets/
+#
+# Then apply it through the provisioning API (paths are resolved inside the
+# container, where ./assets is mounted at /home/jahians/assets):
+#   curl -u root:<password> -X POST -H "Content-Type: application/yaml" \
+#     --data-binary @assets/provisioning-local.yml \
+#     http://localhost:${JAHIA_PORT}/modules/api/provisioning
+
+- karafCommand: "log:log 'START - multi-domain-language-switch local provisioning'"
+
+- addMavenRepository: 'https://devtools.jahia.com/nexus/content/groups/public/@id=Public'
+
+- installBundle:
+    - 'file:///home/jahians/assets/empty-templates-1.0.0.jar'
+  autoStart: true
+  uninstallPreviousVersion: true
+
+- installBundle:
+    - 'mvn:org.jahia.modules/site-settings-seo/5.5.0'
+  autoStart: true
+  uninstallPreviousVersion: true
+
+- installBundle:
+    - 'file:///home/jahians/assets/multi-domain-language-switch-1.0.0-SNAPSHOT.jar'
+  autoStart: true
+  uninstallPreviousVersion: true
+
+- karafCommand: "log:log 'END - multi-domain-language-switch local provisioning'"

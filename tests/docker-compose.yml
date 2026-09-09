@@ -1,0 +1,49 @@
+services:
+    jahia:
+        image: '${JAHIA_IMAGE}'
+        container_name: jahia
+        ports:
+            # JAHIA_PORT lets this run next to an already-running Jahia. Whatever you
+            # publish here must match LSM_PORT when Cypress runs from the host, since
+            # the mapped URLs stored in Jahia carry the port a browser has to reach.
+            - '${JAHIA_PORT:-8080}:8080'
+            - '${JAHIA_DEBUG_PORT:-8000}:8000'
+        environment:
+            - SUPER_USER_PASSWORD=${SUPER_USER_PASSWORD}
+            - JAHIA_LICENSE=${JAHIA_LICENSE}
+            - JPDA=true
+        volumes:
+            - ./assets:/home/jahians/assets
+        extra_hosts:
+            - jahia:127.0.0.1
+        networks:
+            stack:
+                # The domain network under test. Docker's embedded DNS resolves these
+                # names to this container for every other container on the network, so
+                # Cypress reaches Jahia under four distinct hostnames with no DNS setup.
+                # On a developer machine the same names resolve to 127.0.0.1 through the
+                # public localtest.me wildcard, so the specs are identical in both modes.
+                aliases:
+                    - www.localtest.me
+                    - de.localtest.me
+                    - it.localtest.me
+                    - ch.localtest.me
+    cypress:
+        image: '${TESTS_IMAGE}'
+        # https://github.com/cypress-io/cypress/issues/350
+        ipc: host
+        container_name: cypress
+        depends_on:
+            - jahia
+        environment:
+            - MANIFEST=${MANIFEST}
+            - SUPER_USER_PASSWORD=${SUPER_USER_PASSWORD}
+            # Provisioning and GraphQL go through the service name; the specs use the
+            # localtest.me hostnames, which is the whole point of this test bed.
+            - JAHIA_URL=http://jahia:8080
+            - NEXUS_USERNAME=${NEXUS_USERNAME}
+            - NEXUS_PASSWORD=${NEXUS_PASSWORD}
+        networks:
+            - stack
+networks:
+    stack:

@@ -1,0 +1,10 @@
+query getProperty($path: String!, $property: String!) {
+    jcr {
+        nodeByPath(path: $path) {
+            property(name: $property) {
+                values
+                value
+            }
+        }
+    }
+}

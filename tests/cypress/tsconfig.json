@@ -1,0 +1,22 @@
+{
+  "extends": "../tsconfig.json",
+  "include": [
+    "**/*/*.ts",
+    "support/e2e.js"
+  ],
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "noEmit": false,
+    "isolatedModules": false,
+    "types": [
+      "cypress",
+      "node",
+      "@jahia/cypress"
+    ],
+    // DOM is needed because the specs touch element APIs (checkValidity on the
+    // panel's url inputs). With it, `npx tsc --noEmit -p cypress/tsconfig.json`
+    // passes clean and is usable as a pre-flight check before starting a Jahia.
+    "lib": [ "es2015", "DOM" ],
+    "moduleResolution": "node"
+  }
+}

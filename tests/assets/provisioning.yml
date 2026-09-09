@@ -1,0 +1,16 @@
+- karafCommand: "log:log 'START - multi-domain-language-switch provisioning'"
+
+# Minimal template set the test site is built on
+- installBundle:
+    - 'file:///home/jahians/assets/empty-templates-1.0.0.jar'
+  autoStart: true
+  uninstallPreviousVersion: true
+
+# Generates <link rel="alternate" hreflang> and <link rel="canonical"> in the head.
+# Required by 05-seo-head.cy.ts; the module under test rewrites what this produces.
+- installBundle:
+    - 'mvn:org.jahia.modules/site-settings-seo/5.5.0'
+  autoStart: true
+  uninstallPreviousVersion: true
+
+- karafCommand: "log:log 'END - multi-domain-language-switch provisioning'"
