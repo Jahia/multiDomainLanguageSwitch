@@ -1,5 +1,7 @@
 # Integrating and customizing the language menu
 
+**[README](README.md)** · Integration · **[FAQ](FAQ.md)** · **[Tests](tests/README.md)**
+
 How to use `lsm:domaineSwitchLanguage` from your own module (a site factory, a
 template set, a design module) and how to replace its markup with your own.
 
@@ -11,6 +13,7 @@ from a view of yours.
 - [Option A — override the view (recommended)](#option-a--override-the-view-recommended)
 - [Option B — copy the tag into your module](#option-b--copy-the-tag-into-your-module)
 - [The contract the filters rely on](#the-contract-the-filters-rely-on)
+- [Accessibility: what the module guarantees, and what is yours](#accessibility-what-the-module-guarantees-and-what-is-yours)
 - [Accessibility features to keep](#accessibility-features-to-keep)
 - [Restyling without touching the view](#restyling-without-touching-the-view)
 - [Troubleshooting](#troubleshooting)
@@ -226,6 +229,23 @@ using `site-settings-seo`, match its exact markup to get them rewritten too:
 ```
 
 Attribute order matters here as well: `rel` before `hreflang` before `href`.
+
+## Accessibility: what the module guarantees, and what is yours
+
+The module targets WCAG 2.2 AAA and ships everything it can guarantee without
+knowing your palette:
+
+| Guaranteed by the module | Yours to verify |
+|---|---|
+| Semantic `nav` landmark with an accessible name, `ul role="list"`, real links | **Text and background contrast** (1.4.3 AA, 1.4.6 AAA) — the menu inherits both from your stylesheet |
+| `aria-current="page"` plus a non-colour indicator on the current language (1.4.1) | That your own hover and active styles keep a non-colour cue |
+| A focus indicator drawn in `currentColor`, so it survives any palette (2.4.7, 2.4.13) | That your reset does not remove `outline` globally |
+| A 44px target height built from `min-height` and padding (2.5.5 AAA, 1.4.12) | That your line-height or font-size changes do not shrink it below 44px |
+| `lang` and `hreflang` in BCP 47 form, endonym labels | The nav's accessible name if you override the view — keep it distinct from other `nav` landmarks on the page |
+
+If you replace `lsm.css` entirely, re-read that left column: those five rows are
+the reason the file exists, and they are the parts an integrator most often drops
+by accident.
 
 ## Accessibility features to keep
 

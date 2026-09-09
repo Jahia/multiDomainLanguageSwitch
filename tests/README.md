@@ -1,5 +1,7 @@
 # Cypress integration tests
 
+**[README](../README.md)** · **[Integration](../INTEGRATION.md)** · **[FAQ](../FAQ.md)** · Tests
+
 End-to-end tests for `multi-domain-language-switch`, run against a real Jahia.
 They cover what the unit tests in `src/test/java` cannot: actual HTTP responses,
 real `Host` headers, real vanity URL resolution, and the real order of the render
@@ -48,10 +50,26 @@ sane so that failure mode cannot be mistaken for a module bug.
 | `06-edit-mode` | no redirect and no host rewriting in edit or preview, while live still redirects |
 | `07-settings-panel` | the mapping editor in the browser: one field per language, prefilled values, field validation, clearing a field, mapping change applying with no cache flush (the XHR save itself is pending, see Status) |
 | `08-action-authz` | `saveLanguageUrls.do` called directly: anonymous denied, no unauthorized write, an authenticated request without a CSRF token still rejected (the authorized path is pending, see Status) |
+| `10-admin-ui-locale` | the settings panel follows the administrator's `preferredLanguage`, not the content locale in the URL — every assertion requests a content locale that differs from the UI language, so agreement between the two cannot mask a failure |
 | `09-mapping-injection` | a mapping value carrying quotes or a script tag never reaches the markup — the regression test for the stored XSS found during the audit |
+| `zz-docs-screenshots` | regenerates the images used in README.md; skipped unless `CYPRESS_DOCS=1` |
 | `99-teardown` | deletes the test site |
 
 `00-setup` and `99-teardown` bracket the run, so specs execute in filename order.
+
+## Regenerating the documentation screenshots
+
+The four images in `docs/images/` are produced by the suite itself, so they
+cannot drift from the code silently:
+
+```bash
+LSM_PORT=8081 npx cypress run --spec cypress/e2e/00-setup.cy.ts
+LSM_PORT=8081 CYPRESS_DOCS=1 npx cypress run --spec cypress/e2e/zz-docs-screenshots.cy.ts
+cp results/screenshots/zz-docs-screenshots.cy.ts/*.png ../docs/images/
+```
+
+The spec is skipped without `CYPRESS_DOCS=1`, so a normal run neither slows down
+nor rewrites the images.
 
 ## Provisioning
 
@@ -190,7 +208,7 @@ bug and not a corrupt fixture.
 
 ## Status
 
-Executed against Jahia **8.2.3.2** in docker: **60 passing, 4 pending, 0
+Executed against Jahia **8.2.3.2** in docker: **64 passing, 4 pending, 0
 failing**. `npx tsc --noEmit -p cypress/tsconfig.json` and `yarn lint` are clean.
 
 Four tests are `it.skip` with the reason in the code, all for the same blocker:

@@ -149,6 +149,17 @@ export const setPageTitles = (pagePath: string, titlePrefix = 'Home') =>
     });
 
 /**
+ * Sets a user's preferredLanguage, which is what RenderContext.getUILocale()
+ * resolves. The administration panel follows it; the front-end menu does not,
+ * because there the page's own language is the right one.
+ */
+export const setPreferredLanguage = (language: string, user = 'root') =>
+    runGroovy('setUserPreferredLanguage.groovy', {
+        '@@USER@@': user,
+        '@@LANGUAGE@@': language
+    });
+
+/**
  * Fetches a URL without following redirects and without failing on a non-2xx
  * status, which is what every redirect assertion needs.
  */

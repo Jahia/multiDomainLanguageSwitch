@@ -18,7 +18,7 @@ describe('Mapping values cannot break out of the href attribute', () => {
     const injections = [
         'https://x" onmouseover="alert(1)',
         'https://x"><script>alert(1)</script>',
-        "https://x' onfocus='alert(1)"
+        'https://x\' onfocus=\'alert(1)'
     ];
 
     injections.forEach((payload, index) => {
@@ -32,7 +32,7 @@ describe('Mapping values cannot break out of the href attribute', () => {
                 expect(html, 'the mapping value was injected verbatim').to.not.contain(payload);
                 expect(html).to.not.contain('onmouseover="alert(1)"');
                 expect(html).to.not.contain('<script>alert(1)</script>');
-                expect(html).to.not.contain("onfocus='alert(1)'");
+                expect(html).to.not.contain('onfocus=\'alert(1)\'');
             });
         });
     });

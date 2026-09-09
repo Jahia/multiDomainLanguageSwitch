@@ -1,5 +1,7 @@
 # FAQ
 
+**[README](README.md)** · **[Integration](INTEGRATION.md)** · FAQ · **[Tests](tests/README.md)**
+
 Questions that come up when setting this module up. See [README.md](README.md)
 for what the module does and [INTEGRATION.md](INTEGRATION.md) for using it from
 your own module.
@@ -24,6 +26,7 @@ your own module.
 - [How does it behave behind a CDN?](#how-does-it-behave-behind-a-cdn)
 - [Can I get a 301 instead of a 302?](#can-i-get-a-301-instead-of-a-302)
 - [Does it produce `hreflang` alternates for search engines?](#does-it-produce-hreflang-alternates-for-search-engines)
+- [Why is the settings panel in a different language than the rest of the administration?](#why-is-the-settings-panel-in-a-different-language-than-the-rest-of-the-administration)
 - [Do I need the `site-settings-seo` module?](#do-i-need-the-site-settings-seo-module)
 - [How do I test several domains locally?](#how-do-i-test-several-domains-locally)
 
@@ -280,6 +283,23 @@ So:
 
 Note that the redirect answers 302, which does not by itself declare a canonical
 domain (see above) — the canonical link is what does.
+
+### Why is the settings panel in a different language than the rest of the administration?
+
+It should not be, and if it is, the module is too old. The panel follows the
+administrator's **preferred language** (their `preferredLanguage` property, the
+same one jContent uses), not the content locale carried by the URL.
+
+The distinction matters because the panel is served under a content locale:
+`/cms/editframe/default/fr/sites/mysite.languageUrlSettings.html`. A plain
+`fmt:setBundle` resolves against that locale, which produced a French panel
+inside an English administration. The panel now uses Jahia's own
+`<utility:setBundle useUILocale="true">`, which reads
+`RenderContext.getUILocale()`.
+
+The front-end language menu deliberately does the opposite and follows the
+content locale: its labels belong to the page being read, not to the reader's
+account. Two surfaces, two correct answers.
 
 ### Do I need the `site-settings-seo` module?
 

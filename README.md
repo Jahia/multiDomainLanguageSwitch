@@ -12,6 +12,23 @@ domain, and makes the language switch menu move visitors between those domains:
 Switching language keeps the visitor on the same page and changes the host.
 Requesting a page in a language bound to another domain redirects there.
 
+| | |
+|---|---|
+| **Requires** | Jahia 8.2 · optional: `site-settings-seo` for the `hreflang` and canonical rewriting |
+| **Configured in** | Administration → Sites → *Language URL mapping* |
+| **Affects** | live mode only — edit and preview are untouched by design |
+| **Licence** | MIT |
+
+### Where to read what
+
+| If you want to | Read |
+|---|---|
+| Understand what this solves and why Jahia needs it | this file, starting at [Why this module exists](#why-this-module-exists) |
+| Use the component from your own module, or restyle it | **[INTEGRATION.md](INTEGRATION.md)** |
+| Answer a setup question | **[FAQ.md](FAQ.md)** — mapping format, ports, CDN, SEO, local testing |
+| Run or extend the test suites | [Tests](#tests) here, then **[tests/README.md](tests/README.md)** |
+| Know the design and accessibility commitments | **[PRODUCT.md](PRODUCT.md)** |
+
 ## Why this module exists
 
 **Jahia does not support a language-per-domain mapping natively.** Its
@@ -135,12 +152,23 @@ the mapping does not have to be one domain per language. Several languages can
 live on one host, where the language path segment tells them apart, while others
 get a dedicated domain.
 
-![Site settings panel with one base URL field per language](docs/images/site-settings-panel.jpg)
+![The Language URL mapping panel: a heading, an explanation, then one labelled URL field per site language (de, en, fr_CH, it, fr) and a Save button](docs/images/site-settings-panel.png)
+
+A refused value is reported on the field it came from, and the field keeps the
+mapping it already had rather than losing it:
+
+![The same panel with the Italian field marked invalid: a red border, a warning message reading "Rejected: this field was left unchanged", and the same message repeated in a status region under the Save button](docs/images/site-settings-panel-error.png)
 
 On the live French home page (`http://www.localtest.me:8080/home.html`, no `/fr/`
 prefix since French is the default language), the component renders:
 
-![Language menu: Deutsch, English, français (current, bold underlined), italiano](docs/images/language-menu.png)
+![Language menu rendered as a row of links: Deutsch, English, français shown bold and underlined as the current language, français (Suisse), italiano](docs/images/language-menu.png)
+
+The module imposes no colour and no font, so the menu inherits both from the
+site. What it does guarantee is the state and the operability — here the focus
+indicator, drawn in the inherited text colour so it works on any background:
+
+![The same menu with keyboard focus on Deutsch, showing a two-pixel outline drawn in the text colour, offset from the label](docs/images/language-menu-focus.png)
 
 ```html
 <nav class="lsm-language-menu" aria-label="Changer de langue">
@@ -330,11 +358,11 @@ than a feature, so a future change to it is a conscious one:
 `tests/` holds a Cypress test bed running against a real Jahia, over a network of
 four hostnames (`www`, `de`, `ch`, `it` on `localtest.me`) so the multi-domain
 behavior is exercised for real: actual `Host` headers, actual 302 responses,
-actual vanity URL resolution, and the real order of the render filters. Ten
+actual vanity URL resolution, and the real order of the render filters. Twelve
 specs, from site provisioning to teardown, including `09-mapping-injection`
 which asserts a mapping value can never break out of an `href` attribute.
 
-Run against Jahia 8.2.3.2 in docker: **60 passing, 4 pending, 0 failing**. The
+Run against Jahia 8.2.3.2 in docker: **64 passing, 4 pending, 0 failing**. The
 four pending tests all hit one blocker — CSRFGuard per-page tokens — documented
 in [tests/README.md](tests/README.md), together with the traps this harness had
 to work around.

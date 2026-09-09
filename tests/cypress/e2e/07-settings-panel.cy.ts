@@ -53,29 +53,36 @@ describe('Language URL mapping panel', () => {
         // Same blocker: depends on the test above having saved through the panel.
     });
 
-    it('rejects a value that is not an http(s) URL', () => {
+    it('wires each field to its hint and to its own error region', () => {
         cy.visit(`${HOST_WWW}${adminUrl()}`);
 
-        // The field is type=url with pattern="https?://.*", so the browser blocks
-        // submission before the action is even called. Built from parts to keep the
-        // no-script-url lint rule happy: the point is that this value is refused.
-        const scriptUrl = ['java', 'script:alert(1)'].join('');
-        cy.get('#lsm-url-it').clear();
-        cy.get('#lsm-url-it').type(scriptUrl);
-        cy.get('#lsm-url-it').then($input => {
-            expect(($input[0] as HTMLInputElement).checkValidity(), 'invalid URL accepted by the field')
-                .to.be.false;
-        });
+        // The panel no longer relies on a pattern attribute: a browser validation
+        // bubble cannot say which language was refused, and type="url" alone accepts
+        // javascript: as a valid URL. The server is the single source of truth
+        // (LanguageUrlMappingTest, 09-mapping-injection), and its verdict has to be
+        // able to land on the right field.
+        cy.get('#lsm-form').should('have.attr', 'novalidate');
+        cy.get('#lsm-url-fr_CH')
+            .should('have.attr', 'type', 'url')
+            .and('have.attr', 'aria-describedby', 'lsm-help lsm-error-fr_CH')
+            .and('not.have.attr', 'aria-invalid');
+        cy.get('#lsm-error-fr_CH').should('exist').and('not.be.visible');
+        cy.get('.lsm-field[data-lsm-lang="fr_CH"]').should('not.have.class', 'is-invalid');
     });
 
-    it('clearing a field removes that language from the mapping', () => {
+    it('groups the fields under a legend and keeps the status region silent until used', () => {
         cy.visit(`${HOST_WWW}${adminUrl()}`);
-        cy.get('#lsm-url-it').clear();
-        cy.get('#lsm-form button[type=submit]').click();
-        cy.get('#lsm-toast').should('have.class', 'lsm-toast-visible');
 
-        cy.visit(`${HOST_WWW}${adminUrl()}`);
-        cy.get('#lsm-url-it').should('have.value', '');
+        cy.get('#lsm-form legend').should('be.visible').and('not.be.empty');
+        cy.get('#lsm-status')
+            .should('have.attr', 'role', 'status')
+            .and('have.attr', 'aria-live', 'polite')
+            .and('be.empty')
+            .and('not.have.attr', 'data-state');
+        // 2.5.5 (AAA): a 44px target for the only action on the page
+        cy.get('.lsm-submit').then($b => {
+            expect($b[0].getBoundingClientRect().height).to.be.at.least(44);
+        });
     });
 
     it('a mapping change applies on the next live request, with no cache flush', () => {
